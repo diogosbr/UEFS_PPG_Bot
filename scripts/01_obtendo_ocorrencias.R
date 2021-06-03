@@ -1,15 +1,10 @@
 # Carregando os pacotes ---------------------------------------------------
-
 library(rgbif)
 library(dplyr)
 
 # Obtendo os pontos de ocorrência -----------------------------------------
-
-# occ_raw <- occ_search(scientificName = "Guinardia striata",
-#                       limit = 1e4, country = "AU",
-#                       hasCoordinate = TRUE)
-
-occ_raw <- occ_search(scientificName = "Guinardia striata",
+#occ_raw <- occ_search(scientificName = "Dictyopteris jolyana",
+occ_raw <- occ_search(scientificName = "Pyropia spiralis",
                       limit = 1e4, #country = "AU",
                       hasCoordinate = TRUE)
 
@@ -20,9 +15,15 @@ names(occ_raw)
 names(occ_raw$data)
 
 # Selecionado os dados de interesse
-occ <- occ_raw$data %>% select(species, decimalLongitude, decimalLatitude)
+occ <- occ_raw$data %>% select(species,
+                               decimalLongitude,
+                               decimalLatitude,
+                               country)
 
-# Verificando os dados selecionados
+# Número de registros baixados
+nrow(occ)
+
+# Visualizando os primeiros registros
 occ
 
 # Visualizando os dados selecionados
@@ -32,7 +33,9 @@ View(occ)
 par(mar = c(0,0,0,0))
 maps::map(fill = T, col = "gray80", border = F)
 maps::map.axes()
-distinct(occ) %>% select(-species) %>% points(col = "darkred", pch = 16)
+distinct(occ) %>%
+  select(decimalLongitude, decimalLatitude) %>%
+  points(col = "darkred", pch = 16)
 
 # Zoom nos pontos
 maps::map(fill = T, col = "gray80", border = F,

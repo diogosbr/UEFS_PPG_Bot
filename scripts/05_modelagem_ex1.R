@@ -1,7 +1,6 @@
 # Carregando os pacotes ---------------------------------------------------
 library(raster)
 library(dismo)
-#library(rJava)
 
 
 # Carregando as variáveis abioticas
@@ -47,3 +46,8 @@ aval@presence
 aval@auc
 aval@prevalence
 max((aval@TPR + aval@TNR) - 1) #TSS
+
+# Generate a nice color ramp and plot the map
+par(mar = c(0,0,0,0))
+my.colors = colorRampPalette(c("#5E85B8","#EDF0C0","#C13127"))
+plot(modelo_proj, col = my.colors(1000), axes = FALSE, box = FALSE)

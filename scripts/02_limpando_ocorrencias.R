@@ -32,6 +32,8 @@ var1 <- raster('dados/abioticos/selecionados/Phosphate.Range.tif')
 # Salvando o tabela com os registros únicos
 occ_modelagem <- gridSample(occ_unique, var1, n = 1)
 
+# Removendo dados com 'NA'
+
 # Número de ocorrências unicas por pixel
 nrow(occ_modelagem)
 

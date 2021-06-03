@@ -1,0 +1,6 @@
+install.packages("raster")
+install.packages("dismo")
+install.packages("dplyr")
+install.packages("rgbif")
+install.packages("maps")
+install.packages("rJava")
