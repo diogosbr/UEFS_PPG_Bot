@@ -1,7 +1,8 @@
 # Carregando os pacotes ---------------------------------------------------
 library(raster)
 library(corrplot)
-library(PerformanceAnalytics)
+#library(PerformanceAnalytics)
+library(dplyr)
 library(caret)
 
 # Listando os arquivos
@@ -16,6 +17,10 @@ plot(preditoras[[1]])
 # Criando uma tabela com os valores por pixel
 tabela_preditoras <- na.omit(preditoras[])
 
+head(tabela_preditoras)
+dim(tabela_preditoras)
+View(tabela_preditoras)
+
 # Matriz de correlação
 cor_mat <- cor(tabela_preditoras)
 
@@ -26,30 +31,37 @@ corrplot(cor_mat, method = "number",
 #col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot(cor_mat, method = "color",
          type = "upper", order = "hclust",
-         addCoef.col = "black", # Add coefficient of correlation
-         tl.col = "black", tl.srt = 45, #Text label color and rotation
-         # hide correlation coefficient on the principal diagonal
+         addCoef.col = "black",
+         tl.col = "black", tl.srt = 45,
          diag = FALSE)
-
-# Plot da matriz de correlação (exemplo2)
-#chart.Correlation(tabela_preditoras, histogram = TRUE, pch = 19)
 
 # Selecionando automaticamente
 variaveis_remover <- findCorrelation(x = cor_mat, cutoff = 0.7)
 
-# Variaveis a remover
+# Variáveis a remover
 variaveis_remover
 
-# Variaveis selecionadas
+# Variáveis selecionadas
 names(preditoras)[-variaveis_remover]
 
-# Selecionando as variaveis
+# Selecionando as variáveis
 preditoras_selecionadas <- preditoras[[-variaveis_remover]]
 
-# Salvando no disco
+# Nova matriz de correlação
+cor_mat_sel <- preditoras_selecionadas %>% values() %>% na.omit() %>% cor()
+
+# Plotando a nova matriz de correlção
+corrplot(cor_mat_sel, method = "color",
+         type = "upper", order = "hclust",
+         addCoef.col = "black",
+         tl.col = "black", tl.srt = 45,
+         diag = FALSE)
+
+# Salvando as variáveis no disco
 for(i in 1:nlayers(preditoras_selecionadas)){
   writeRaster(preditoras_selecionadas[[i]],
               filename = paste0("dados/abioticos/selecionados/",
                                 names(preditoras_selecionadas)[i], ".tif"),
-              options = "COMPRESS=DEFLATE")
+              options = "COMPRESS=DEFLATE",
+              overwrite = TRUE)
 }
