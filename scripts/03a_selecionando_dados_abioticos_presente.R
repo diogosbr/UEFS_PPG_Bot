@@ -60,7 +60,7 @@ corrplot(cor_mat_sel, method = "color",
 # Salvando as variáveis no disco
 for(i in 1:nlayers(preditoras_selecionadas)){
   writeRaster(preditoras_selecionadas[[i]],
-              filename = paste0("dados/abioticos/selecionados/",
+              filename = paste0("dados/abioticos/selecionados/presente/",
                                 names(preditoras_selecionadas)[i], ".tif"),
               options = "COMPRESS=DEFLATE",
               overwrite = TRUE)

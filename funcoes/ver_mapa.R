@@ -9,7 +9,8 @@ ver_pontos <- function(tabela, lon, lat, plot_raster = NULL){
   m_base <- leaflet() %>%
     addTiles() %>%
     setView(lng = -50, lat = -12 , zoom = 4) %>%
-    addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = F)) %>%
+    addScaleBar(position = "bottomleft",
+                options = scaleBarOptions(imperial = F)) %>%
     addProviderTiles(providers$Esri.WorldImagery, group = "Satelite") %>%
     addMiniMap(tiles = providers$Esri.WorldStreetMap,
                toggleDisplay = TRUE, position = "bottomright")

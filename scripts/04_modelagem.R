@@ -2,66 +2,59 @@
 library(raster)
 library(dismo)
 
+# Carregando as variaveis abioticas
+lista <- list.files("dados/abioticos/selecionados/presente/", pattern = "tif$", full.names = TRUE)
+lista
 
-# Carregando as variáveis abioticas
-lista <- list.files("dados/abioticos/selecionados/", pattern = "tif$", full.names = TRUE)
-
+# Importando as variaveis abioticas
 preditoras <- stack(lista)
 preditoras
 
-# Carregando as ocorrências
+# Carregando as ocorrencias
 occ <- read.csv("dados/ocorrencias/ocorrencias_modelagem.csv")
 
 head(occ)
 dim(occ)
 
-# Criando a tabela com informação ambiental associada
+# Criando a tabela com informacao ambiental associada
 tabela <- extract(preditoras, occ)
 
 head(tabela)
 dim(tabela)
 
-# Criando as partições
-# part <- kfold(tabela, k = 3)
-#
-# occ_p1 <- occ[part == 1,]
-# occ_p2 <- occ[part == 2,]
-# occ_p3 <- occ[part == 3,]
-
-# Gerando o modelo com algoritmo bioclim
+# Gerando o modelo com algoritmo BIOCLIM
 modelo_bioclim <- bioclim(preditoras, occ)
 
+plot(modelo_bioclim)
+density(modelo_bioclim)
+
+# Fechando o parametro grafico
+dev.off()
+
 # Projetando o modelo
-modelo_proj <- predict(preditoras, modelo_bioclim)
+modelo_bioclim_proj <- predict(preditoras, modelo_bioclim)
 
 # Plotando
-plot(modelo_proj)
+plot(modelo_bioclim_proj)
 
+# Gerando o modelo com algoritmo MAXENT
+modelo_maxent <- maxent(preditoras, occ)
 
-# Avaliando o modelo ------------------------------------------------------
+density(modelo_maxent)
 
-ausencias <- randomPoints(mask = preditoras[[1]], n = 1000, p = occ)
-
-# Indice dos registros selecionados para treino
-indices <- sample(1:nrow(occ), nrow(occ) * 0.8)
-
-# Dividindo em treino e teste
-occ_treino <- occ[indices,]
-occ_teste <- occ[-indices,]
-ausencias_treino <- ausencias[indices,]
-ausencias_teste <- ausencias[-indices,]
-
-# Gerando o modelo com algoritmo bioclim
-modelo_bioclim <- bioclim(preditoras, occ_treino)
+# Fechando o parametro grafico
+dev.off()
 
 # Projetando o modelo
-modelo_proj <- predict(preditoras, modelo_bioclim)
+modelo_maxent_proj <- predict(preditoras, modelo_maxent)
 
-# Avaliando o modelo
-aval <- evaluate(p = occ_teste, a = ausencias_teste,
-         model = modelo_bioclim, x = preditoras)
+# Plotando
+plot(modelo_maxent_proj)
 
-aval@presence
-aval@auc
-aval@prevalence
-max((aval@TPR + aval@TNR) - 1) #TSS
+
+
+
+
+
+
+# Qual o desempenho do modelo?

@@ -37,7 +37,7 @@ nrow(occ_clean)
 occ_clean <- select(occ_clean, decimalLongitude, decimalLatitude)
 
 # Importando uma variável preditora
-var1 <- raster('dados/abioticos/selecionados/Phosphate.Range.tif')
+var1 <- raster('dados/abioticos/selecionados/presente/Phosphate.Range.tif')
 
 # Salvando o tabela com os registros únicos
 occ_unique <- gridSample(occ_clean, var1, n = 1)
