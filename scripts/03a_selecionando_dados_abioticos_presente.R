@@ -6,7 +6,8 @@ library(dplyr)
 library(caret)
 
 # Listando os arquivos
-lista_abio <- list.files("dados/abioticos/presente/", full.names = TRUE)
+lista_abio <- list.files("dados/abioticos/presente/",
+                         pattern = "tif$", full.names = TRUE)
 
 # Importando as variáveis preditoras
 preditoras <- stack(lista_abio)
