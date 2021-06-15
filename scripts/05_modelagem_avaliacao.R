@@ -1,10 +1,12 @@
 # Carregando os pacotes ---------------------------------------------------
 library(raster)
 library(dismo)
-source("funcoes/ver_mapa.R")
+#source("funcoes/ver_mapa.R")
 
 # Carregando as variaveis abioticas
 lista <- list.files("dados/abioticos/selecionados/presente/", pattern = "tif$", full.names = TRUE)
+
+lista
 
 # Importando as variaveis abioticas
 preditoras <- stack(lista)
@@ -41,15 +43,15 @@ modelo_bioclim <- bioclim(preditoras, occ_treino)
 # Projetando o modelo
 modelo_proj <- predict(preditoras, modelo_bioclim)
 
+# Plotando
+plot(modelo_proj)
+
 # ver_pontos(occ_teste, lon = "decimalLongitude", lat = "decimalLatitude",
 #            plot_raster = modelo_proj)
 
 # Avaliando o modelo
 aval <- evaluate(p = occ_teste, a = ausencias_teste,
                  model = modelo_bioclim, x = preditoras)
-
-aval@presence
-aval@absence
 
 # Valor de AUC
 aval@auc
@@ -68,22 +70,23 @@ points(occ, pch = 16, col = 'lightgreen', cex = 0.8)
 points(ausencias, pch = ".", col = 'red', cex = 1.5)
 
 
+# Salvando o modelo -------------------------------------------------------
+
 # Salvando o geotiff do modelo no disco
-writeRaster(modelo_bioclim_proj_presente, "resultados/bioclim.tif")
+writeRaster(modelo_bioclim_proj_presente, "resultados/modelo.tif")
 
 # Salvando um PNG no disco
-png("resultados/bioclim.png", width = 900, height = 400)
+png("resultados/modelo.png", width = 900, height = 400)
 par(mar = c(0,0,0,0))
 my.colors = colorRampPalette(c("#5E85B8","#EDF0C0","#C13127"))
 plot(modelo_proj, col = my.colors(1000), axes = FALSE, box = FALSE)
 dev.off()
 
 # Salvando um PNG no disco
-png("resultados/bioclim_com_pontos.png", width = 900, height = 400)
+png("resultados/modelo_com_pontos.png", width = 900, height = 400)
 par(mar = c(0,0,0,0))
 my.colors = colorRampPalette(c("#5E85B8","#EDF0C0","#C13127"))
 plot(modelo_proj, col = my.colors(1000), axes = FALSE, box = FALSE)
 points(occ, pch = 16, col = 'lightgreen', cex = 0.8)
 points(ausencias, pch = ".", col = 'red', cex = 1.5)
 dev.off()
-

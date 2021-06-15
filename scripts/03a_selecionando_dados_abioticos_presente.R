@@ -8,11 +8,12 @@ library(caret)
 # Listando os arquivos
 lista_abio <- list.files("dados/abioticos/presente/",
                          pattern = "tif$", full.names = TRUE)
+lista_abio
 
 # Importando as variáveis preditoras
 preditoras <- stack(lista_abio)
 
-# Plotando uma variável
+# Plotando a primeira variável
 plot(preditoras[[1]])
 
 # Criando uma tabela com os valores por pixel
@@ -26,10 +27,6 @@ View(tabela_preditoras)
 cor_mat <- cor(tabela_preditoras)
 
 # Plot da matriz de correlação (exemplo1)
-corrplot(cor_mat, method = "number",
-         type = "upper", tl.col = "black", tl.srt = 45)
-
-#col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 corrplot(cor_mat, method = "color",
          type = "upper", order = "hclust",
          addCoef.col = "black",
@@ -38,9 +35,6 @@ corrplot(cor_mat, method = "color",
 
 # Selecionando automaticamente
 variaveis_remover <- findCorrelation(x = cor_mat, cutoff = 0.7)
-
-# Variáveis a remover
-variaveis_remover
 
 # Variáveis selecionadas
 names(preditoras)[-variaveis_remover]
@@ -57,6 +51,9 @@ corrplot(cor_mat_sel, method = "color",
          addCoef.col = "black",
          tl.col = "black", tl.srt = 45,
          diag = FALSE)
+
+# Criando a pasta para receber as variaveis selecionadas
+if(!dir.exists("dados/abioticos/selecionados/presente/")){dir.create("dados/abioticos/selecionados/presente/", recursive = TRUE)}
 
 # Salvando as variáveis no disco
 for(i in 1:nlayers(preditoras_selecionadas)){

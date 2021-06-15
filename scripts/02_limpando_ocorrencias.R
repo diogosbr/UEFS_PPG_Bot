@@ -3,11 +3,11 @@ library(raster)
 library(dismo)
 library(dplyr)
 library(CoordinateCleaner)
+library(vroom)
 source("funcoes/ver_mapa.R")
 
 # Importando os pontos de ocorrência --------------------------------------
-occ_raw <- read.table("dados/ocorrencias/ocorrencias_bruta.csv",
-                      header = TRUE, sep = ",")
+occ_raw <- vroom("dados/ocorrencias/ocorrencias_bruta.csv") %>% as.data.frame()
 
 # Verifica inicio ...
 head(occ_raw)
@@ -18,13 +18,10 @@ tail(occ_raw)
 # Número de ocorrências totais
 nrow(occ_raw)
 
-# Visualizando os dados
+# Visualizando os pontos no mapa interativo
 ver_pontos(occ_raw, lon = 'decimalLongitude', lat = 'decimalLatitude')
 
-# Salvando o tabela com os registros únicos
-occ_distinct <- cc_dupl(occ_raw, species = "species",
-                        lon = 'decimalLongitude', lat = 'decimalLatitude')
-
+# Checando os dados de ocorrencia
 occ_clean <- clean_coordinates(occ_raw, species = "species",
                                lon = 'decimalLongitude', lat = 'decimalLatitude',
                                tests = c("equal", "outliers", "zeros", 'dupl'),
@@ -33,11 +30,11 @@ occ_clean <- clean_coordinates(occ_raw, species = "species",
 # Número de ocorrências únicas
 nrow(occ_clean)
 
-# Removendo a coluna de espécie
+# Selecionando as colunas longitude e latitude
 occ_clean <- select(occ_clean, decimalLongitude, decimalLatitude)
 
 # Importando uma variável preditora
-var1 <- raster('dados/abioticos/selecionados/presente/Phosphate.Range.tif')
+var1 <- raster('dados/abioticos/presente/Phosphate.Range.tif')
 
 # Salvando o tabela com os registros únicos
 occ_unique <- gridSample(occ_clean, var1, n = 1)
@@ -45,7 +42,7 @@ occ_unique <- gridSample(occ_clean, var1, n = 1)
 # Resetando os nomes das linhas
 rownames(occ_unique) <- NULL
 
-# Visualizando os dados
+# Visualizando os pontos no mapa interativo
 ver_pontos(occ_unique, lon = 'decimalLongitude', lat = 'decimalLatitude',
            plot_raster = var1)
 
@@ -55,14 +52,14 @@ occ_unique_with_values <- occ_unique[!is.na(extract(var1, occ_unique)),]
 # Resetando os nomes das linhas
 rownames(occ_unique_with_values) <- NULL
 
-# Visualizando os dados
+# Visualizando os pontos no mapa interativo
 ver_pontos(occ_unique_with_values,
            lon = 'decimalLongitude', lat = 'decimalLatitude')
 
 # Removendo dados inconsistentes
 occ_modelagem <- occ_unique_with_values[-c(16, 17, 18),]
 
-# Visualizando os dados
+# Visualizando os pontos no mapa interativo
 ver_pontos(occ_modelagem, lon = 'decimalLongitude', lat = 'decimalLatitude')
 
 # Número de ocorrências únicas por pixel, com valores e sem inconcistencias

@@ -10,6 +10,8 @@ lista_abio <- list.files("dados/abioticos/presente", full.names = TRUE)
 # Selecioando apenas as variaveis de temperatura e salinidade
 lista_abio <- grep(x = lista_abio, pattern = "Temperature|Salinity", value = TRUE)
 
+lista_abio
+
 # Importando as variáveis preditoras
 preditoras <- stack(lista_abio)
 
@@ -32,9 +34,6 @@ corrplot(cor_mat, method = "color",
 # Selecionando automaticamente
 variaveis_remover <- findCorrelation(x = cor_mat, cutoff = 0.7)
 
-# Variáveis a remover
-names(preditoras)[variaveis_remover]
-
 # Variáveis selecionadas
 names(preditoras)[-variaveis_remover]
 
@@ -50,6 +49,9 @@ corrplot(cor_mat_sel, method = "color",
          addCoef.col = "black",
          tl.col = "black", tl.srt = 45,
          diag = FALSE)
+
+# Criando a pasta para receber as variaveis selecionadas
+if(!dir.exists("dados/abioticos/selecionados/futuro/")){dir.create("dados/abioticos/selecionados/futuro/", recursive = TRUE)}
 
 # Salvando as variáveis no disco
 for(i in 1:nlayers(preditoras_selecionadas)){

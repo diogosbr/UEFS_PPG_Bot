@@ -5,6 +5,8 @@ library(dismo)
 # Carregando as variaveis abioticas do presente
 lista_presente <- list.files("dados/abioticos/selecionados/futuro/", pattern = "tif$", full.names = TRUE)
 
+lista_presente
+
 # Importando as variaveis abioticas do presente
 preditoras_presente <- stack(lista_presente)
 preditoras_presente
@@ -12,20 +14,24 @@ preditoras_presente
 # Carregando as variaveis abioticas do futuro
 lista_futuro <- list.files("dados/abioticos/futuro/RCP85_2100/", pattern = "tif$", full.names = TRUE)
 
+lista_futuro
+
 # Selecionando as mesmas variáveis do presente
 ponteiro <- basename(lista_futuro) %in% basename(lista_presente)
 lista_futuro <- lista_futuro[ponteiro]
 
-# Importando as variaveis abioticas do futuro
+lista_futuro
+
+# Importando as variaveis abióticas do futuro
 preditoras_futuro <- stack(lista_futuro)
 preditoras_futuro
 
 # Carregando as ocorrencias
 occ <- read.csv("dados/ocorrencias/ocorrencias_modelagem.csv")
 
+# Verificando a tabela
 head(occ)
 dim(occ)
-
 
 
 # BIOCLIM -----------------------------------------------------------------
@@ -40,6 +46,8 @@ modelo_bioclim_proj_futuro <- predict(preditoras_futuro, modelo_bioclim)
 # Plotando
 plot(modelo_bioclim_proj_presente)
 plot(modelo_bioclim_proj_futuro)
+
+# Plotando lado a lado
 modelos_bioclim <- stack(modelo_bioclim_proj_presente, modelo_bioclim_proj_futuro)
 names(modelos_bioclim) <- c("presente", "futuro")
 plot(modelos_bioclim)
