@@ -1,12 +1,13 @@
+# Instalando os pacotes ---------------------------------------------------
+source("scripts/00_instalando_pacotes.R")
+
 # Carregando os pacotes ---------------------------------------------------
 library(rgbif)
 library(dplyr)
 
 # Obtendo os pontos de ocorrência -----------------------------------------
-#occ_raw <- occ_search(scientificName = "Dictyopteris jolyana",
 occ_raw <- occ_search(scientificName = "Pyropia spiralis",
-                      limit = 1e4, #country = "AU",
-                      hasCoordinate = TRUE)
+                      limit = 1e4, hasCoordinate = TRUE)
 
 # Verificando a estrutura do dado
 names(occ_raw)
@@ -36,13 +37,6 @@ maps::map.axes()
 distinct(occ) %>%
   select(decimalLongitude, decimalLatitude) %>%
   points(col = "darkred", pch = 16)
-
-# Zoom nos pontos
-maps::map(fill = T, col = "gray80", border = F,
-          xlim = range(occ$decimalLongitude) * c(0.9,1.1),
-          ylim = range(occ$decimalLatitude) * c(1.1,0.9) )
-maps::map.axes()
-distinct(occ) %>% select(-species) %>% points(col = "darkred", pch = 16)
 
 # Salvando a tabela no disco rígido
 write.csv(occ, "dados/ocorrencias/ocorrencias_bruta.csv", row.names = FALSE)
